@@ -31,6 +31,10 @@ Now that our connection has been made, we need to start the thread that handles 
 Finally, now we can make use of it. The functions available are listed below
 ```python
     # Different types of queries availabe
+    # param query: The SQL query that should be executed
+    # param args: The args that should be passed on the the SQL query (expects a tuple)
+    # param data_pack: If you want to pass extra data through to the callback, recommended to create a dict
+    # param seconds: The queue delay
     TSQL.execute(query, args=None, callback=None, data_pack=None, seconds=0.1)
     TSQL.fetchone(query, args=None, callback=None, data_pack=None, seconds=0.1)
     TSQL.fetchall(query, args=None, callback=None, data_pack=None, seconds=0.1)
@@ -44,7 +48,9 @@ Finally, now we can make use of it. The functions available are listed below
 
 It's important to note that when using the **fetchone** or **fetchall** it will execute the query BEFORE fetching it, so no need to use TSQL.execute when you want to fetch something.
 
-If you want to grab the data from **fetchone** or **strong text**fetchall a callback is necessary. To demonstrate this look at the code examples below:
+If you want to arguments to the sql query, you can pass them through args=(userid,) - expects a tuple
+
+If you want to grab the data from **fetchone** or **fetchall** a callback is necessary. To demonstrate this look at the code examples below:
 
 **Code examples**
 -------------
