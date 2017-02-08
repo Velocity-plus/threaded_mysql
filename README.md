@@ -1,3 +1,6 @@
+**Threaded MySQL**
+-------------
+----------
 Tired of lag?
 
 If your server requires a remote connection to a database, stacked up queries can cause noticeable lag in your game server (freezing, players twitching) since MySQL doesn't 'really' queue up the queries. 
