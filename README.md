@@ -26,10 +26,16 @@ Now that our connection has been made, we need to start the thread that handles 
     TSQL.handlequeue_start()
 
 Finally, now we can make use of it. The functions available are listed below
-
+    # Different types of queries availabe
     TSQL.execute(query, args=None, callback=None, data_pack=None, seconds=0.1)
     TSQL.fetchone(query, args=None, callback=None, data_pack=None, seconds=0.1)
     TSQL.fetchall(query, args=None, callback=None, data_pack=None, seconds=0.1)
+    
+    # Refresh the tables
+    TSQL.commit()
+    
+    # Closes the connection to the database
+    TSQL.close()
 
 It's important to note that when using the **fetchone** or **fetchall** it will execute the query BEFORE fetching it, so no need to use TSQL.execute when you want to fetch something.
 
