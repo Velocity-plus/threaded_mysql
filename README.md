@@ -6,6 +6,9 @@ If your server requires a remote connection to a database, stacked up queries ca
 
 I've made a library to fix this problem, it basically queues up the queries and executes them after a certain delay (that can be modified).
  It's inspired from the Sourcemod threaded MySQL https://wiki.alliedmods.net/SQL_(SourceMod_Scripting) Remember that all queries now requires a callback, since they are dispatched.
+ 
+ This library will only work for Source-python, but I am working on a version for regular use.
+ 
 
 **Documentation**
 -------------
