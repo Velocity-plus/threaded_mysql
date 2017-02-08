@@ -33,7 +33,7 @@ Finally, now we can make use of it. The functions available are listed below
     
     # Refresh the tables
     TSQL.commit()
-    
+
     # Closes the connection to the database
     TSQL.close()
 
