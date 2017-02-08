@@ -2,12 +2,10 @@ Tired of lag?
 
 If your server requires a remote connection to a database, stacked up queries can cause noticeable lag in your game server (freezing, players twitching) since MySQL doesn't 'really' queue up the queries. 
 
-I've made a library to fix this problem, it basically queues up the queries and executes them after a certain delay (that can be modified). It's inspired from the [u]Sourcemod threaded mysql[/u] [url]https://wiki.alliedmods.net/SQL_(SourceMod_Scripting)[/url]
+I've made a library to fix this problem, it basically queues up the queries and executes them after a certain delay (that can be modified). It's inspired from the Sourcemod threaded mysql https://wiki.alliedmods.net/SQL_(SourceMod_Scripting)
 Remember that all queries now requires a callback, since they are dispatched.
 
-
-[b]The library:[/b]
-[i]threaded_mysql.py[/i]
+threaded_mysql.py
 
 [syntax=py]"""
 Created by: Velocityplus
