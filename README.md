@@ -14,7 +14,7 @@ I've made a library to fix this problem, it basically queues up the queries and 
 -------------
 
 The library works as an extension of PyMYSQL, so as any other MySQL script, a connection must be established to a database, but before we can do that, let us initialize the class for threaded MySQL. 
-```
+```python
     from threaded_mysql import ThreadedMySQL
     
     TSQL = ThreadedMySQL()
