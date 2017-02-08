@@ -11,21 +11,22 @@ I've made a library to fix this problem, it basically queues up the queries and 
 -------------
 
 The library works as an extension of PyMYSQL, so as any other MySQL script, a connection must be established to a database, but before we can do that, let us initialize the class for threaded MySQL. 
-
+```
     from threaded_mysql import ThreadedMySQL
     
     TSQL = ThreadedMySQL()
-
+```
 After we have initialized our class, we can connect to our MySQL database (in future updates, you can create the connection elsewhere and pass it into the class, but for now..).
-
+```python
     Available paramenters (host, user, password, db ,charset, cursorclass)
     TSQL.connect(host='localhost', user='root', password='123', db='utf8')
-
+```
 Now that our connection has been made, we need to start the thread that handles the queue of queries, as seen below.
 
     TSQL.handlequeue_start()
 
 Finally, now we can make use of it. The functions available are listed below
+```python
     # Different types of queries availabe
     TSQL.execute(query, args=None, callback=None, data_pack=None, seconds=0.1)
     TSQL.fetchone(query, args=None, callback=None, data_pack=None, seconds=0.1)
@@ -36,6 +37,7 @@ Finally, now we can make use of it. The functions available are listed below
 
     # Closes the connection to the database
     TSQL.close()
+```
 
 It's important to note that when using the **fetchone** or **fetchall** it will execute the query BEFORE fetching it, so no need to use TSQL.execute when you want to fetch something.
 
@@ -43,7 +45,7 @@ If you want to grab the data from **fetchone** or **strong text**fetchall a call
 
 **Code examples**
 -------------
-
+```python
     from messages import SayText2
     from events import Event
     from threaded_mysql import ThreadedMySQL
@@ -82,8 +84,7 @@ If you want to grab the data from **fetchone** or **strong text**fetchall a call
                  data_pack = {'text':text}
                  # Fetches one name
                  TSQL.fetchall('SELECT name FROM database_example', callback=sql_callback_2, data_pack=data_pack)
-
-
+```
 > Output !fetchall
 > =>  [{'name': John'}, {'name': 'Daniel'}.... 
 > 
