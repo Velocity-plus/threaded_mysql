@@ -25,9 +25,9 @@ After we have initialized our class, we can connect to our MySQL database (in fu
     TSQL.connect(host='localhost', user='root', password='123', db='utf8')
 ```
 Now that our connection has been made, we need to start the thread that handles the queue of queries, as seen below.
-
+```python
     TSQL.handlequeue_start()
-
+```
 Finally, now we can make use of it. The functions available are listed below
 ```python
     # Different types of queries availabe
