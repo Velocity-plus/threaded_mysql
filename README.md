@@ -86,7 +86,7 @@ If you want to grab the data from **fetchone** or **strong text**fetchall a call
                  # Let's pass some extra things...
                  data_pack = {'text':text}
                  # Fetches one name
-                 TSQL.fetchall('SELECT name FROM database_example', callback=sql_callback_2, data_pack=data_pack)
+                 TSQL.fetchone('SELECT name FROM database_example', callback=sql_callback_2, data_pack=data_pack)
 ```
 > Output !fetchall
 > =>  [{'name': John'}, {'name': 'Daniel'}.... 
