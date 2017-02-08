@@ -1,6 +1,5 @@
 **Threaded MySQL**
 -------------
-----------
 Tired of lag?
 
 If your server requires a remote connection to a database, stacked up queries can cause noticeable lag in your game server (freezing, players twitching) since MySQL doesn't 'really' queue up the queries. 
@@ -205,7 +204,6 @@ I've made a library to fix this problem, it basically queues up the queries and 
 
 **Documentation**
 -------------
-----------
 
 The library works as an extension of PyMYSQL, so as any other MySQL script, a connection must be established to a database, but before we can do that, let us initialize the class for threaded MySQL. 
 
@@ -234,10 +232,6 @@ If you want to grab the data from **fetchone** or **strong text**fetchall a call
 
 **Code examples**
 -------------
-
-
-----------
-
 
     from messages import SayText2
     from events import Event
