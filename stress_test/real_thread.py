@@ -38,8 +38,8 @@ import pymysql.cursors
 class ThreadedMySQL:
 
     def __init__(self):
+        # Is the thread running?
         self.thread_status = False
-
         # Regular Queue
         self._r_queue = Queue()
         # Prioitized Queue
@@ -47,12 +47,17 @@ class ThreadedMySQL:
 
         self.connection_method = 0
 
+        # Show print messages?
         self._debug = True
 
         self.wait = 0
 
 
     def wait(self, delay):
+        """
+        :param delay: The delay in seconds
+        :return:
+        """
         self.wait = delay
 
 
@@ -70,6 +75,7 @@ class ThreadedMySQL:
          (such as timestamp, query and prioritized)
         :return:
         """
+        # We need this later
         query_type = 0
 
         # If callback = None assuming no data returned needed
@@ -211,18 +217,23 @@ class ThreadedMySQL:
                 self.complete_task(worker, prio=True)
 
     def _start_thread(self):
+        # Creates the thread
         self.t = GameThread(target=self._threader)
         self.t.daemon = True
         self.t.start()
 
     def handlequeue_start(self):
-        self.thread_status = True
+        # Starts the queue
+        self.thread_status = True # This must be true before the thread can loop
         self._start_thread()
 
     def handlequeue_stop(self):
         self.thread_status = False
 
     def queue_size(self):
+        """
+        :return: Returns the size of the queue
+        """
         return self._r_queue.qsize() + self._p_queue.qsize()
 
     def connect(self, host, user, password, db, charset, cursorclass=pymysql.cursors.DictCursor):
@@ -235,7 +246,7 @@ class ThreadedMySQL:
                                               cursorclass=cursorclass)
             self.cursor = self.connection.cursor()
             if self._debug:
-                print('threaded_mysql: connection was succesfully established.')
+                print('threaded_mysql: [SUCCES] connection was succesfully established.')
 
             self.connection_method = 1
         except:
