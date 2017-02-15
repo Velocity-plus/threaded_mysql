@@ -1,34 +1,7 @@
-# import threading
-# from queue import Queue
-# import time
-#
-# print_lock = threading.Lock()
-#
-#
-# def exampleJob(worker):
-#     time.sleep(0.5)
-#
-#     with print_lock:
-#         print(threading.current_thread().name, worker)
-#
-# def threader():
-#     while True:
-#         worker = q.get()
-#         exampleJob(worker)
-#         q.task_done()
-#
-#
-# q = Queue()
-#
-#
-#
-# for x in range(10):
-#     t = threading.Thread(target = threader)
-#     t.daemon = True
-#     t.start()
-#
-# start = time.time()
-
+"""
+Created By Velocity-plus
+Github: https://github.com/Velocity-plus/
+"""
 from listeners.tick import GameThread
 from queue import Queue
 from time import time as timestamp, sleep
