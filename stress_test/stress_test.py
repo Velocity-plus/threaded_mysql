@@ -1,65 +1,41 @@
-# ==============================================
-# >> THREADED MYSQL (NO LAGS)
-# ==============================================
+from messages import SayText2
 from threaded_mysql import ThreadedMySQL
-from listeners.tick import Repeat, GameThread
-from messages import SayText2
-
-
-TSQL =ThreadedMySQL()
-TSQL.connect(host='localhost', user='root', password='123', db='test')
-TSQL.handlequeue_start()
-
-def print_out(data):
-    for x in data:
-        name = x['name']
-        SayText2("Name: {}".format(name))
-
-def no_lag():
-    # There is about 100 names to select...
-    TSQL.fetchall("SELECT name FROM players", callback=print_out)
-
-
-def load():
-    Timer = Repeat(no_lag)
-    Timer.start(0.01)
-
-
-
-
-# ==============================================
-# >> NORMAL PYMYSQL (DOES LAGS)
-# ==============================================
-
 import pymysql.cursors
-from listeners.tick import Repeat
-from messages import SayText2
+
+# ON = No lag | OFF = Server freeze
+use_threaded_mysql = 1
 
 connection = pymysql.connect(host="localhost",
                                   user="root",
                                   password="123",
-                                  db="test",
+                                  db="my_database",
                                   charset="utf8",
                                   cursorclass=pymysql.cursors.DictCursor)
 cursor = connection.cursor()
 
 
-
-
-def crash():
-    # There is about 100 names to select...
-    cursor.execute("SELECT name FROM players")
-    data = cursor.fetchall()
-    for x in data:
-        name = x['name']
-        SayText2("Name: {}".format(name))
-
-
 def load():
-    Timer = Repeat(crash)
-    Timer.start(0.01)
+    # Put use_threaded_mysql = 1 to test the difference
+    if not use_threaded_mysql:
+
+        # Executes the query 1000 times
+        for x in range(1000):
+
+            cursor.execute('SELECT name FROM my_database')
+            data = cursor.fetchone()
+            # Prints it out (not necessary tho)
+            SayText2('Name: {}'.format(data['name'])).send()
+    else:
+        # Class
+        TSQL = ThreadedMySQL()
+        # Use the connection already created
+        TSQL.connect_use(connection)
+        # Starts the queuehandler
+        TSQL.handlequeue_start()
+
+        for x in range(1000):
+            TSQL.fetchone('SELECT name FROM my_database', callback=test)
 
 
-
-
-
+def test(data):
+    SayText2('Name: {}'.format(data['name'])).send()
