@@ -1,3 +1,34 @@
+# import threading
+# from queue import Queue
+# import time
+#
+# print_lock = threading.Lock()
+#
+#
+# def exampleJob(worker):
+#     time.sleep(0.5)
+#
+#     with print_lock:
+#         print(threading.current_thread().name, worker)
+#
+# def threader():
+#     while True:
+#         worker = q.get()
+#         exampleJob(worker)
+#         q.task_done()
+#
+#
+# q = Queue()
+#
+#
+#
+# for x in range(10):
+#     t = threading.Thread(target = threader)
+#     t.daemon = True
+#     t.start()
+#
+# start = time.time()
+
 from listeners.tick import GameThread
 from queue import Queue
 from time import time as timestamp, sleep
@@ -28,7 +59,7 @@ class ThreadedMySQL:
     def execute(self, query, args=None, callback=None, data_pack=None, prioritize=False, get_info=False):
         """
             This function cannot pass fetch data to the callback!
-        
+
         :param query: The SQL query that you want to execute
         :param args: If the query have any args
         :param callback: The callback for the query
@@ -53,7 +84,7 @@ class ThreadedMySQL:
     def fetchone(self, query, args=None, callback=None, data_pack=None, prioritize=False, get_info=False):
         """
             This function both execute and fetch data, no need to execute before using this!
-        
+
         :param query: The SQL query that you want to execute
         :param args: If the query have any args
         :param callback: The callback for the query
@@ -78,7 +109,7 @@ class ThreadedMySQL:
     def fetchall(self, query, args=None, callback=None, data_pack=None, prioritize=False, get_info=False):
         """
           This function both execute and fetch data, no need to execute before using this!
-          
+
         :param query: The SQL query that you want to execute
         :param args: If the query have any args
         :param callback: The callback for the query
@@ -221,3 +252,32 @@ class ThreadedMySQL:
         except:
             if self._debug:
                 print('threaded_mysql: [ERROR] Not possible to create cursor.')
+
+    def commit(self):
+        """
+        Normal pymysql commit
+        :return:
+        """
+        self.connection.commit()
+
+    def close(self, commit_before_save=True):
+        """
+        Closes the mysql connection
+        :param commit_before_save: should it save before closing the connection
+        :return:
+        """
+        if commit_before_save:
+            self.connection.commit()
+
+        self.connection.close()
+
+
+
+
+
+
+
+
+
+
+

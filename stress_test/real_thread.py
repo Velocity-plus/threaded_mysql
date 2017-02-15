@@ -254,6 +254,23 @@ class ThreadedMySQL:
                 print('threaded_mysql: [ERROR] Not possible to create cursor.')
 
 
+    def commit(self):
+        """
+        Normal pymysql commit
+        :return:
+        """
+        self.connection.commit()
+
+    def close(self, commit_before_save=True):
+        """
+        Closes the mysql connection
+        :param commit_before_save: should it save before closing the connection
+        :return:
+        """
+        if commit_before_save:
+            self.connection.commit()
+
+        self.connection.close()
 
 
 
