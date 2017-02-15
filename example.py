@@ -6,7 +6,7 @@ from threaded_mysql import ThreadedMySQL
 TSQL = ThreadedMySQL()
 
 # Connects to a mysql database
-TSQL.connect('localhost', 'root', '123pass', 'trikz_server', 'utf8')
+TSQL.connect('localhost', 'root', '123', 'my_database', 'utf8')
 
 # Starts the queuehandler (should only be called once)
 TSQL.handlequeue_start()
@@ -45,14 +45,14 @@ def on_player_say(game_event):
 
     if text == '!fetchone':
         # Fetches all the names
-        TSQL.fetchone('SELECT name FROM stats', callback=sql_callback)
+        TSQL.fetchone('SELECT name FROM my_database', callback=sql_callback)
 
     if text == '!fetchall':
         # Let's pass some extra things...
         data_pack = {'text': text}
         # Fetches one name
-        TSQL.fetchall('SELECT name FROM stats', callback=sql_callback_2, data_pack=data_pack)
+        TSQL.fetchall('SELECT name FROM my_database', callback=sql_callback_2, data_pack=data_pack)
 
     if text == '!info':
         # Fetches one name
-        TSQL.execute('SELECT name FROM stats', callback=sql_callback_3, get_info=True)
+        TSQL.execute("INSERT INTO my_database (name) VALUES('John')", callback=sql_callback_3, get_info=True)
