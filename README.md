@@ -89,51 +89,78 @@ If you want to grab the data from **fetchone** or **fetchall** a callback is nec
 More examples coming soon!!
 
 ```python
-    from messages import SayText2
-    from events import Event
-    from threaded_mysql import ThreadedMySQL
-    
-    # Initializes the class
-    TSQL = ThreadedMySQL()
-    
-    # Connects to a mysql database
-    TSQL.connect('localhost','root','123','datbase_example','utf8')
-    
-    # Starts the queuehandler (should only be called once)
-    TSQL.handlequeue_start()
-    
-    # The callback 
-    def sql_callback(data):
-        print(data)
-    
-    # The callback 
-    def sql_callback_2(data, data_pack):
-        text = data_pack['text']
-        print(data)
-        print("You wrote {0}".format(text))
-    
-    
-    @Event('player_say')
-    def on_player_say(game_event):
-            # What did the player write
-            text = game_event['text']
-       
-            if text == '!fetchall':
-                # Fetches all the names 
-                TSQL.fetchall('SELECT name FROM database_example', callback=sql_callback)
-    
-            if text == '!fetchone':
-                 # Let's pass some extra things...
-                 data_pack = {'text':text}
-                 # Fetches one name
-                 TSQL.fetchone('SELECT name FROM database_example', callback=sql_callback_2, data_pack=data_pack)
+from messages import SayText2
+from events import Event
+from threaded_mysql import ThreadedMySQL
+
+# Initializes the class
+TSQL = ThreadedMySQL()
+
+# Connects to a mysql database
+TSQL.connect('localhost', 'root', '123', 'my_database', 'utf8')
+
+# Starts the queuehandler (should only be called once)
+TSQL.handlequeue_start()
+
+
+# The callback from !fetchone
+def sql_callback(data):
+    name = data['name']
+    SayText2(name).send()
+
+
+# The callback from !fetchall
+def sql_callback_2(data, data_pack):
+    text = data_pack['text']
+    SayText2("You wrote {}".format(text)).send()
+    for x in data:
+        name = x['name']
+        SayText2('Name: {}'.format(name)).send()
+
+# The callback from !info
+def sql_callback_3(get_info):
+    """
+    get_info includes 'query', 'time', 'prioritized'
+    """
+    query = get_info['query']
+    time = get_info['time']
+    prio = get_info['prioritized']
+    SayText2('Query: {0}\nTime: {1} seconds\nPrioritized: {2}'.format(query, time, prio)).send()
+
+
+
+@Event('player_say')
+def on_player_say(game_event):
+    # What did the player write
+    text = game_event['text']
+
+    if text == '!fetchone':
+        # Fetches all the names
+        TSQL.fetchone('SELECT name FROM my_database', callback=sql_callback)
+
+    if text == '!fetchall':
+        # Let's pass some extra things...
+        data_pack = {'text': text}
+        # Fetches one name
+        TSQL.fetchall('SELECT name FROM my_database', callback=sql_callback_2, data_pack=data_pack)
+
+    if text == '!info':
+        # Fetches one name
+        TSQL.execute("INSERT INTO my_database (name) VALUES('John')", callback=sql_callback_3, get_info=True)
 ```
-> Output !fetchall
-> =>  [{'name': John'}, {'name': 'Daniel'}.... 
-> 
-> Output !fectone
-> =>  ['name': John']
-> => You wrote !fetchone
+Output !fetchall
+=> You wrote: !fetchall
+=> Name: <name >
+=> Name: <name > 
+=> (...)
+
+Output !fetchone
+=> Name: John
+
+Output !info
+=> Query: INSERT INTO stats (name) VALUES('John')
+=> Time: 0.014952421188354492 seconds
+=> Prioritized: False
 
 
 
