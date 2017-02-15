@@ -1,4 +1,4 @@
-**Threaded MySQL**
+**Threaded MySQ 2.0.0L**
 -------------
 **UPDATE 15-02-2017**
 Now uses GameThread instead of Repeat and Delay
