@@ -1,11 +1,17 @@
 **Threaded MySQL**
 -------------
-Tired of lag?
+**UPDATE 15-02-2017**
+Now uses GameThread instead of Repeat and Delay
+Delaying the queue is still possible tho, through
+```python
+TSQL.wait(5) # Seconds
+```
+
 
 If your server requires a remote connection to a database, stacked up queries can cause noticeable lag in your game server (freezing, players twitching) since MySQL doesn't 'really' queue up the queries. 
 
-I've made a library to fix this problem, it basically queues up the queries and executes them after a certain delay (that can be modified).
- It's inspired from the Sourcemod threaded MySQL https://wiki.alliedmods.net/SQL_(SourceMod_Scripting) Remember that all queries now requires a callback, since they are dispatched.
+I've made a library to fix this problem, it basically queues up the queries and executes them with a dispatched GameThread. It's inspired from the Sourcemod threaded mysql https://wiki.alliedmods.net/SQL_(SourceMod_Scripting)
+Remember that all queries now requires a callback, since they are truely dispatched.
  
  This library will only work for Source-python, but I am working on a version for regular use.
  
@@ -19,11 +25,27 @@ The library works as an extension of PyMYSQL, so as any other MySQL script, a co
     
     TSQL = ThreadedMySQL()
 ```
-After we have initialized our class, we can connect to our MySQL database (in future updates, you can create the connection elsewhere and pass it into the class, but for now..).
+After we have initialized our class, we can connect to our MySQL database, you can use Threaded MySQL to connect to your database.
 ```python
     Available paramenters (host, user, password, db ,charset, cursorclass)
     TSQL.connect(host='localhost', user='root', password='123', db='utf8')
 ```
+
+If you don't want to connect with Threaded MySQL you can make your connection elsewhere and pass it to Threaded MySQL as soon below with PyMYSQL:
+```python
+   import pymysql.cursors
+
+   connection = pymysql.connect(host="localhost",
+                                    user="root",
+                                    password="123",
+                                    db="test",
+                                    charset="utf8",
+                                    cursorclass=pymysql.cursors.DictCursor)
+
+   TSQL.connect_use(connection)
+```
+
+
 Now that our connection has been made, we need to start the thread that handles the queue of queries, as seen below.
 ```python
     TSQL.handlequeue_start()
@@ -31,18 +53,28 @@ Now that our connection has been made, we need to start the thread that handles 
 Finally, now we can make use of it. The functions available are listed below
 ```python
     # Different types of queries availabe
-    # param query: The SQL query that should be executed
-    # param args: The args that should be passed on the the SQL query (expects a tuple)
-    # param data_pack: If you want to pass extra data through to the callback, recommended to create a dict
-    # param seconds: The queue delay
+    #    :param query: The SQL query that you want to execute
+    #    :param args: If the query have any args
+    #    :param callback: The callback for the query
+    #    :param data_pack: If you want to pass more to the callback than the query
+    #    :param prioritize: If you have large queues prioritizing the query can make it finish
+    #     before the rest of the queue is finished
+    #    :param get_info: If you want information passed to the callback
+    #     (such as timestamp, query and prioritized)
     TSQL.execute(query, args=None, callback=None, data_pack=None, seconds=0.1)
     TSQL.fetchone(query, args=None, callback=None, data_pack=None, seconds=0.1)
     TSQL.fetchall(query, args=None, callback=None, data_pack=None, seconds=0.1)
     
-    # Refresh the tables
+    # Returns the size of the queue
+    TSQL.queue_size()
+
+    #If you want to delay the queue for a specific amount time, 1 being 1 seconed
+    TSQL.wait(delay)
+
+    # Refreshes the tables
     TSQL.commit()
 
-    # Closes the connection to the database
+    # Closes the mysql connection
     TSQL.close()
 ```
 
@@ -54,6 +86,8 @@ If you want to grab the data from **fetchone** or **fetchall** a callback is nec
 
 **Code examples**
 -------------
+More examples coming soon!!
+
 ```python
     from messages import SayText2
     from events import Event
