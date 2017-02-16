@@ -241,13 +241,15 @@ class ThreadedMySQL:
         """
         self.connection.commit()
 
-    def close(self, commit_before_save=True):
+    def close(self, finish_queue_before_close=True):
         """
         Closes the mysql connection
-        :param commit_before_save: should it save before closing the connection
+        :param finish_queue_before_close: Finishes the queue before it terminates the connection
         :return:
         """
-        if commit_before_save:
-            self.connection.commit()
-
-        self.connection.close()
+        if finish_queue_before_close:
+            while self.queue_size() > 0:
+                pass
+            else:
+                self.connection.close()
+        else: self.connection.close()
