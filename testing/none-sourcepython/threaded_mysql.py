@@ -2,7 +2,7 @@
 Created By Velocity-plus
 Github: https://github.com/Velocity-plus/
 """
-from listeners.tick import GameThread
+import threading
 from queue import Queue
 from time import time as timestamp, sleep
 import pymysql.cursors
@@ -17,7 +17,6 @@ class ThreadedMySQL:
         self._r_queue = Queue()
         # Prioitized Queue
         self._p_queue = Queue()
-
         self.connection_method = 0
 
         # Show print messages?
@@ -28,6 +27,7 @@ class ThreadedMySQL:
     def wait(self, delay):
         """
         If you for some reason want to delay the queue
+
         :param delay: The delay in seconds
         :return:
         """
@@ -36,6 +36,7 @@ class ThreadedMySQL:
     def execute(self, query, args=None, callback=None, data_pack=None, prioritize=False, get_info=False):
         """
             This function cannot pass fetched data to the callback!
+
         :param query: The SQL query that you want to execute
         :param args: If the SQL query have any args
         :param callback: The callback for the query
@@ -61,6 +62,7 @@ class ThreadedMySQL:
     def fetchone(self, query, args=None, callback=None, data_pack=None, prioritize=False, get_info=False):
         """
             This function both execute and fetch data, no need to execute before using this!
+
         :param query: The SQL query that you want to execute
         :param args: If the SQL query have any args
         :param callback: The callback for the query
@@ -84,6 +86,7 @@ class ThreadedMySQL:
     def fetchall(self, query, args=None, callback=None, data_pack=None, prioritize=False, get_info=False):
         """
           This function both execute and fetch data, no need to execute before using this!
+
         :param query: The SQL query that you want to execute
         :param args: If the SQL query have any args
         :param callback: The callback for the query
@@ -112,61 +115,83 @@ class ThreadedMySQL:
         data_pack = worker[3]
         get_info = worker[4]
         query_type = worker[5]
-
-        if get_info:
-            get_info['time'] = timestamp() - get_info['time']
-
-        if args:
-            self.cursor.execute(query, args)
-        else:
-            self.cursor.execute(query)
-
-        if query_type == 0:
+        try:
             if get_info:
-                if callback:
-                    if data_pack:
-                        callback(data_pack, get_info)
-                    else:
-                        callback(get_info)
-            else:
-                if callback:
-                    if data_pack:
-                        callback(data_pack)
-                    else:
-                        callback()
-        if query_type == 1:
-            data = self.cursor.fetchone()
-            if get_info:
-                if callback:
-                    if data_pack:
-                        callback(data, data_pack, get_info)
-                    else:
-                        callback(data, get_info)
-            else:
-                if callback:
-                    if data_pack:
-                        callback(data, data_pack)
-                    else:
-                        callback(data)
+                get_info['time'] = timestamp() - get_info['time']
 
-        if query_type == 2:
-            data = self.cursor.fetchall()
-            if get_info:
-                if callback:
-                    if data_pack:
-                        callback(data, data_pack, get_info)
-                    else:
-                        callback(data, get_info)
+            if args:
+                self.cursor.execute(query, args)
             else:
-                if callback:
-                    if data_pack:
-                        callback(data, data_pack)
-                    else:
-                        callback(data)
-        if prio:
-            self._p_queue.task_done()
-        else:
-            self._r_queue.task_done()
+                self.cursor.execute(query)
+
+            if query_type == 0:
+                if get_info:
+                    if callback:
+                        if data_pack:
+                            callback(data_pack, get_info)
+                        else:
+                            callback(get_info)
+                else:
+                    if callback:
+                        if data_pack:
+                            callback(data_pack)
+                        else:
+                            callback()
+            if query_type == 1:
+                data = self.cursor.fetchone()
+                if get_info:
+                    if callback:
+                        if data_pack:
+                            callback(data, data_pack, get_info)
+                        else:
+                            callback(data, get_info)
+                else:
+                    if callback:
+                        if data_pack:
+                            callback(data, data_pack)
+                        else:
+                            callback(data)
+
+            if query_type == 2:
+                data = self.cursor.fetchall()
+                if get_info:
+                    if callback:
+                        if data_pack:
+                            callback(data, data_pack, get_info)
+                        else:
+                            callback(data, get_info)
+                else:
+                    if callback:
+                        if data_pack:
+                            callback(data, data_pack)
+                        else:
+                            callback(data)
+            if prio:
+                self._p_queue.task_done()
+            else:
+                self._r_queue.task_done()
+
+        except Exception as SQL_ERROR:
+            # Possible errors
+            retryExceptions = tuple([
+                pymysql.InternalError,
+                pymysql.OperationalError,
+                pymysql.Error,
+            ])
+
+            ie, oe, e = retryExceptions
+            print('-'*64)
+
+            print('Exceptions Found: (SQL Query: {})'.format(query))
+            if ie:
+                print(' * threaded_mysql: [ERROR] Exception pymysql.InternalError')
+            if oe:
+                print(' * threaded_mysql: [ERROR] Exception pymysql.OperationalError')
+            if e:
+                print(' * threaded_mysql: [ERROR] Exception pymysql.Error')
+            print('Actual Error:')
+            print(' * threaded_mysql: {}'.format(SQL_ERROR.args))
+            print('-' * 64)
 
 
     def _threader(self):
@@ -184,9 +209,9 @@ class ThreadedMySQL:
 
     def _start_thread(self):
         # Creates the thread
-        self.t = GameThread(target=self._threader)
-        self.t.daemon = True
+        self.t = threading.Thread(target=self._threader)
         self.t.start()
+
 
     def handlequeue_start(self):
         """
@@ -266,3 +291,15 @@ class ThreadedMySQL:
             else:
                 self.connection.close()
         else: self.connection.close()
+
+
+def test(data, das):
+    print(str(data))
+
+SQL = ThreadedMySQL()
+
+SQL.connect('46.4.82.149', 'trikz', '123pass', 'trikz_server', 'utf8')
+
+SQL.handlequeue_start()
+SQL.fetchall("SELECT name FROM statsd", callback=test)
+

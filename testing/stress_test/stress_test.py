@@ -7,8 +7,8 @@ use_threaded_mysql = 1
 
 connection = pymysql.connect(host="localhost",
                                   user="root",
-                                  password="123",
-                                  db="my_database",
+                                  password="123pass",
+                                  db="trikz_server",
                                   charset="utf8",
                                   cursorclass=pymysql.cursors.DictCursor)
 cursor = connection.cursor()
@@ -21,7 +21,7 @@ def load():
         # Executes the query 1000 times
         for x in range(1000):
 
-            cursor.execute('SELECT name FROM my_database')
+            cursor.execute('SELECT name FROM stats')
             data = cursor.fetchone()
             # Prints it out (not necessary tho)
             SayText2('Name: {}'.format(data['name'])).send()
@@ -33,9 +33,10 @@ def load():
         # Starts the queuehandler
         TSQL.handlequeue_start()
 
-        for x in range(1000):
-            TSQL.fetchone('SELECT name FROM my_database', callback=test)
+        TSQL.fetchone('SELECT name FROM lol', callback=test)
 
 
 def test(data):
     SayText2('Name: {}'.format(data['name'])).send()
+
+
