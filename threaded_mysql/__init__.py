@@ -27,6 +27,8 @@ class ThreadedMySQL:
 
     def wait(self, delay):
         """
+        If you for some reason want to delay the queue
+
         :param delay: The delay in seconds
         :return:
         """
@@ -37,12 +39,12 @@ class ThreadedMySQL:
             This function cannot pass fetch data to the callback!
 
         :param query: The SQL query that you want to execute
-        :param args: If the query have any args
+        :param args: If the SQL query have any args
         :param callback: The callback for the query
-        :param data_pack: If you want to pass more to the callback than the query
-        :param prioritize: If you have large queues prioritizing the query can make it finish
+        :param data_pack: If you want to pass special information to the callback
+        :param prioritize: If you have large queues, prioritizing the query can make it skip the queue
          before the rest of the queue is finished
-        :param get_info: If you want information passed to the callback
+        :param get_info: If you want information about the query passed to the callback
          (such as timestamp, query and prioritized)
         :return:
         """
@@ -63,12 +65,12 @@ class ThreadedMySQL:
             This function both execute and fetch data, no need to execute before using this!
 
         :param query: The SQL query that you want to execute
-        :param args: If the query have any args
+        :param args: If the SQL query have any args
         :param callback: The callback for the query
-        :param data_pack: If you want to pass more to the callback than the query
-        :param prioritize: If you have large queues prioritizing the query can make it finish
+        :param data_pack: If you want to pass special information to the callback
+        :param prioritize: If you have large queues, prioritizing the query can make it skip the queue
          before the rest of the queue is finished
-        :param get_info: If you want information passed to the callback
+        :param get_info: If you want information about the query passed to the callback
          (such as timestamp, query and prioritized)
         :return:
         """
@@ -87,12 +89,12 @@ class ThreadedMySQL:
           This function both execute and fetch data, no need to execute before using this!
 
         :param query: The SQL query that you want to execute
-        :param args: If the query have any args
+        :param args: If the SQL query have any args
         :param callback: The callback for the query
-        :param data_pack: If you want to pass more to the callback than the query
-        :param prioritize: If you have large queues prioritizing the query can make it finish
+        :param data_pack: If you want to pass special information to the callback
+        :param prioritize: If you have large queues, prioritizing the query can make it skip the queue
          before the rest of the queue is finished
-        :param get_info: If you want information passed to the callback
+        :param get_info: If you want information about the query passed to the callback
          (such as timestamp, query and prioritized)
         :return:
         """
@@ -193,11 +195,20 @@ class ThreadedMySQL:
         self.t.start()
 
     def handlequeue_start(self):
+        """
+        This handles the queue, should be stopped on unload
+        :return:
+        """
         # Starts the queue
         self.thread_status = True # This must be true before the thread can loop
         self._start_thread()
 
     def handlequeue_stop(self):
+        """
+        This stops the queue for being processed, while a connection still might be open
+         no queries can be executed.
+        :return:
+        """
         self.thread_status = False
 
     def queue_size(self):
@@ -207,6 +218,9 @@ class ThreadedMySQL:
         return self._r_queue.qsize() + self._p_queue.qsize()
 
     def connect(self, host, user, password, db, charset, cursorclass=pymysql.cursors.DictCursor):
+        """
+            Check PyMYSQL documentation, it works the same way.
+        """
         try:
             self.connection = pymysql.connect(host=host,
                                               user=user,
@@ -224,6 +238,11 @@ class ThreadedMySQL:
                 print('threaded_mysql: [ERROR] Not possible to make a connection.')
 
     def connect_use(self, connection):
+        """
+        If created your connection elsewhere in your code, you can pass it to Threaded MySQL
+        :param connection: Your connection socket
+        :return:
+        """
         try:
             self.connection = connection
             self.cursor = self.connection.cursor()
@@ -236,7 +255,7 @@ class ThreadedMySQL:
 
     def commit(self):
         """
-        Normal pymysql commit
+        Regular pymysql commit
         :return:
         """
         self.connection.commit()
