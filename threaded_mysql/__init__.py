@@ -172,8 +172,9 @@ class ThreadedMySQL:
             else:
                 self._r_queue.task_done()
 
-        except:
-            pass
+        except pymysql.InternalError as error:
+            code, message = error.args
+            print(">>>>>>>>>>>>>", code, message)
 
     def _threader(self):
         while self.thread_status:
