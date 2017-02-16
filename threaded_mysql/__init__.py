@@ -112,62 +112,83 @@ class ThreadedMySQL:
         data_pack = worker[3]
         get_info = worker[4]
         query_type = worker[5]
-
-        if get_info:
-            get_info['time'] = timestamp() - get_info['time']
-
-        if args:
-            self.cursor.execute(query, args)
-        else:
-            self.cursor.execute(query)
-
-        if query_type == 0:
+        try:
             if get_info:
-                if callback:
-                    if data_pack:
-                        callback(data_pack, get_info)
-                    else:
-                        callback(get_info)
-            else:
-                if callback:
-                    if data_pack:
-                        callback(data_pack)
-                    else:
-                        callback()
-        if query_type == 1:
-            data = self.cursor.fetchone()
-            if get_info:
-                if callback:
-                    if data_pack:
-                        callback(data, data_pack, get_info)
-                    else:
-                        callback(data, get_info)
-            else:
-                if callback:
-                    if data_pack:
-                        callback(data, data_pack)
-                    else:
-                        callback(data)
+                get_info['time'] = timestamp() - get_info['time']
 
-        if query_type == 2:
-            data = self.cursor.fetchall()
-            if get_info:
-                if callback:
-                    if data_pack:
-                        callback(data, data_pack, get_info)
-                    else:
-                        callback(data, get_info)
+            if args:
+                self.cursor.execute(query, args)
             else:
-                if callback:
-                    if data_pack:
-                        callback(data, data_pack)
-                    else:
-                        callback(data)
-        if prio:
-            self._p_queue.task_done()
-        else:
-            self._r_queue.task_done()
+                self.cursor.execute(query)
 
+            if query_type == 0:
+                if get_info:
+                    if callback:
+                        if data_pack:
+                            callback(data_pack, get_info)
+                        else:
+                            callback(get_info)
+                else:
+                    if callback:
+                        if data_pack:
+                            callback(data_pack)
+                        else:
+                            callback()
+            if query_type == 1:
+                data = self.cursor.fetchone()
+                if get_info:
+                    if callback:
+                        if data_pack:
+                            callback(data, data_pack, get_info)
+                        else:
+                            callback(data, get_info)
+                else:
+                    if callback:
+                        if data_pack:
+                            callback(data, data_pack)
+                        else:
+                            callback(data)
+
+            if query_type == 2:
+                data = self.cursor.fetchall()
+                if get_info:
+                    if callback:
+                        if data_pack:
+                            callback(data, data_pack, get_info)
+                        else:
+                            callback(data, get_info)
+                else:
+                    if callback:
+                        if data_pack:
+                            callback(data, data_pack)
+                        else:
+                            callback(data)
+            if prio:
+                self._p_queue.task_done()
+            else:
+                self._r_queue.task_done()
+
+        except Exception as SQL_ERROR:
+            # Possible errors
+            retryExceptions = tuple([
+                pymysql.InternalError,
+                pymysql.OperationalError,
+                pymysql.Error,
+            ])
+
+            ie, oe, e = retryExceptions
+            print('-'*64)
+
+            print('Exceptions Found: (SQL Query: {})'.format(query))
+            if ie:
+                print(' * threaded_mysql: [ERROR] Exception pymysql.InternalError')
+            if oe:
+                print(' * threaded_mysql: [ERROR] Exception pymysql.OperationalError')
+            if e:
+                print(' * threaded_mysql: [ERROR] Exception pymysql.Error')
+            print('Actual Error:')
+            print(' * threaded_mysql: {}'.format(SQL_ERROR.args))
+            print('-' * 64)
 
     def _threader(self):
         while self.thread_status:
