@@ -36,7 +36,7 @@ class ThreadedMySQL:
 
     def execute(self, query, args=None, callback=None, data_pack=None, prioritize=False, get_info=False):
         """
-            This function cannot pass fetch data to the callback!
+            This function cannot pass fetched data to the callback!
 
         :param query: The SQL query that you want to execute
         :param args: If the SQL query have any args
@@ -219,7 +219,7 @@ class ThreadedMySQL:
 
     def connect(self, host, user, password, db, charset, cursorclass=pymysql.cursors.DictCursor):
         """
-            Check PyMYSQL documentation, it works the same way.
+        Checkout PyMYSQL documentation for complete walkthrough
         """
         try:
             self.connection = pymysql.connect(host=host,
@@ -239,7 +239,7 @@ class ThreadedMySQL:
 
     def connect_use(self, connection):
         """
-        If created your connection elsewhere in your code, you can pass it to Threaded MySQL
+        If you created your connection elsewhere in your code, you can pass it to Threaded MySQL
         :param connection: Your connection socket
         :return:
         """
