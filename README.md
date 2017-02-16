@@ -3,8 +3,7 @@
 
 **UPDATE 15-02-2017**
 
-Now uses GameThread instead of Repeat and Delay
-Delaying the queue is still possible tho, through
+Now uses GameThread instead of Repeat and Delay                                                                                         Delaying the queue is still possible tho, through
 
 ```python
 TSQL.wait(5) # Seconds
@@ -18,9 +17,8 @@ Remember that all queries now requires a callback, since they are truely dispatc
  
  This library will only work for Source-python, but I am working on a version for regular use.
  
- ** Installation **
- Download the latest release and drag the folder into your /addons/source-python/packages/source-python/..
- Restart your server.
+ **Installation**
+ Download the latest release and drag the folder into your /addons/source-python/packages/source-python/..                          Restart your server.
   
 
 **Documentation**
