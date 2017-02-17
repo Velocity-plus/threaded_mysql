@@ -32,8 +32,8 @@ def load():
         TSQL.connect_use(connection)
         # Starts the queuehandler
         TSQL.handlequeue_start()
-
-        TSQL.fetchone('SELECT name FROM stats', callback=test)
+        for x in range(1000):
+          TSQL.fetchone('SELECT name FROM stats', callback=test)
 
 
 def test(data):
