@@ -2,7 +2,9 @@
 Created By Velocity-plus
 Github: https://github.com/Velocity-plus/
 """
-import threading
+from traceback import format_exc as traceback_format_exc
+from threading import Thread
+from logging import error as logging_error
 from queue import Queue
 from time import time as timestamp, sleep
 import pymysql.cursors
@@ -19,6 +21,8 @@ class ThreadedMySQL:
         self._p_queue = Queue()
         self.connection_method = 0
 
+        # Issue with print for WINDOWS user set the variable to 'echo_console'
+        self.error_handling = 'print'
         # Show print messages?
         self._debug = True
 
@@ -173,26 +177,7 @@ class ThreadedMySQL:
 
         except Exception as SQL_ERROR:
             # Possible errors
-            retryExceptions = tuple([
-                pymysql.InternalError,
-                pymysql.OperationalError,
-                pymysql.Error,
-            ])
-
-            ie, oe, e = retryExceptions
-            print('-'*64)
-
-            print('Exceptions Found: (SQL Query: {})'.format(query))
-            if ie:
-                print(' * threaded_mysql: [ERROR] Exception pymysql.InternalError')
-            if oe:
-                print(' * threaded_mysql: [ERROR] Exception pymysql.OperationalError')
-            if e:
-                print(' * threaded_mysql: [ERROR] Exception pymysql.Error')
-            print('Actual Error:')
-            print(' * threaded_mysql: {}'.format(SQL_ERROR.args))
-            print('-' * 64)
-
+            logging_error(traceback_format_exc())
 
     def _threader(self):
         while self.thread_status:
@@ -209,7 +194,7 @@ class ThreadedMySQL:
 
     def _start_thread(self):
         # Creates the thread
-        self.t = threading.Thread(target=self._threader)
+        self.t = Thread(target=self._threader)
         self.t.start()
 
 
@@ -301,5 +286,5 @@ SQL = ThreadedMySQL()
 SQL.connect('46.4.82.149', 'trikz', '123pass', 'trikz_server', 'utf8')
 
 SQL.handlequeue_start()
-SQL.fetchall("SELECT name FROM statsd", callback=test)
+SQL.fetchall("SELECT q FROM stats", callback=test)
 

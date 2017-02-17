@@ -3,6 +3,8 @@ Created By Velocity-plus
 Github: https://github.com/Velocity-plus/
 """
 from listeners.tick import GameThread
+from traceback import format_exc as traceback_format_exc
+from logging import error as logging_error
 from queue import Queue
 from time import time as timestamp, sleep
 import pymysql.cursors
@@ -169,26 +171,8 @@ class ThreadedMySQL:
                 self._r_queue.task_done()
 
         except Exception as SQL_ERROR:
-            # Possible errors
-            retryExceptions = tuple([
-                pymysql.InternalError,
-                pymysql.OperationalError,
-                pymysql.Error,
-            ])
-
-            ie, oe, e = retryExceptions
-            print('-'*64)
-
-            print('Exceptions Found: (SQL Query: {})'.format(query))
-            if ie:
-                print(' * threaded_mysql: [ERROR] Exception pymysql.InternalError')
-            if oe:
-                print(' * threaded_mysql: [ERROR] Exception pymysql.OperationalError')
-            if e:
-                print(' * threaded_mysql: [ERROR] Exception pymysql.Error')
-            print('Actual Error:')
-            print(' * threaded_mysql: {}'.format(SQL_ERROR.args))
-            print('-' * 64)
+            # Full trackback
+            logging_error(traceback_format_exc())
 
     def _threader(self):
         while self.thread_status:
