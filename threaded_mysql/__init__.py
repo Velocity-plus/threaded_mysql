@@ -3,8 +3,10 @@ Created By Velocity-plus
 Github: https://github.com/Velocity-plus/
 """
 from listeners.tick import GameThread
+from core import echo_console
 from traceback import format_exc as traceback_format_exc
 from logging import error as logging_error
+from sys import exc_info
 from queue import Queue
 from time import time as timestamp, sleep
 import pymysql.cursors
@@ -22,6 +24,8 @@ class ThreadedMySQL:
 
         self.connection_method = 0
 
+        # Issue with print for WINDOWS user set the variable to 'echo_console'
+        self.error_handling = 'print'
         # Show print messages?
         self._debug = True
 
@@ -171,7 +175,28 @@ class ThreadedMySQL:
                 self._r_queue.task_done()
 
         except Exception as SQL_ERROR:
-            # Full trackback
+
+            # Possible errors
+            class_error, actual_error, traceback = exc_info()
+
+            format_error = '-' * 64 + '\nExceptions probable cause (SQL Query: {0})\n{1}\nActual Error:\n{2}'.format(query,
+
+                                                                                                                     class_error,
+
+                                                                                                                     SQL_ERROR)
+
+            if self.error_handling == 'print':
+
+                print(format_error)
+
+                print('-' * 64)
+
+            else:
+
+                echo_console(format_error)
+
+                echo_console('-' * 64)
+
             logging_error(traceback_format_exc())
 
     def _threader(self):
@@ -229,12 +254,19 @@ class ThreadedMySQL:
                                               cursorclass=cursorclass)
             self.cursor = self.connection.cursor()
             if self._debug:
-                print('threaded_mysql: [SUCCES] connection was succesfully established.')
+                if self.error_handling == 'print':
+                    print('threaded_mysql: [SUCCES] connection was succesfully established.')
+                else:
+                    echo_console('threaded_mysql: [SUCCES] connection was succesfully established.')
+
 
             self.connection_method = 1
         except:
             if self._debug:
-                print('threaded_mysql: [ERROR] Not possible to make a connection.')
+                if self.error_handling == 'print':
+                    print('threaded_mysql: [ERROR] Not possible to make a connection.')
+                else:
+                    echo_console('threaded_mysql: [ERROR] Not possible to make a connection.')
 
     def connect_use(self, connection):
         """
@@ -246,11 +278,18 @@ class ThreadedMySQL:
             self.connection = connection
             self.cursor = self.connection.cursor()
             if self._debug:
-                print('threaded_mysql: [SUCCES] Cursor created succesfully for your connection.')
+                if self.error_handling == 'print':
+                    print('threaded_mysql: [SUCCES] Cursor created succesfully for your connection.')
+                else:
+                    echo_console('threaded_mysql: [SUCCES] Cursor created succesfully for your connection.')
             self.connection_method = 2
         except:
             if self._debug:
-                print('threaded_mysql: [ERROR] Not possible to create cursor.')
+                if self.error_handling == 'print':
+                    print('threaded_mysql: [ERROR] Not possible to create cursor.')
+                else:
+                    echo_console('threaded_mysql: [ERROR] Not possible to create cursor.')
+
 
     def commit(self):
         """

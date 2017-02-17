@@ -2,9 +2,10 @@
 Created By Velocity-plus
 Github: https://github.com/Velocity-plus/
 """
+import threading
 from traceback import format_exc as traceback_format_exc
-from threading import Thread
 from logging import error as logging_error
+from sys import exc_info
 from queue import Queue
 from time import time as timestamp, sleep
 import pymysql.cursors
@@ -177,7 +178,18 @@ class ThreadedMySQL:
 
         except Exception as SQL_ERROR:
             # Possible errors
+            class_error, actual_error, traceback = exc_info()
+            format_error = '-'*64+'\nExceptions probable cause (SQL Query: {0})\n{1}\nActual Error:\n{2}'.format(query,
+                                                                                                                 class_error,
+                                                                                                                 SQL_ERROR)
+            if self.error_handling == 'print':
+                print(format_error)
+                print('-' * 64)
+            else:
+                echo_message(format_error)
+                echo_message('-'*64)
             logging_error(traceback_format_exc())
+
 
     def _threader(self):
         while self.thread_status:
@@ -194,7 +206,7 @@ class ThreadedMySQL:
 
     def _start_thread(self):
         # Creates the thread
-        self.t = Thread(target=self._threader)
+        self.t = threading.Thread(target=self._threader)
         self.t.start()
 
 
@@ -283,8 +295,9 @@ def test(data, das):
 
 SQL = ThreadedMySQL()
 
+
 SQL.connect('46.4.82.149', 'trikz', '123pass', 'trikz_server', 'utf8')
 
 SQL.handlequeue_start()
-SQL.fetchall("SELECT q FROM stats", callback=test)
+SQL.fetchall("SELECT name FROM statsd", callback=test)
 
