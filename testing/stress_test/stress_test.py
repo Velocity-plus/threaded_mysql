@@ -5,8 +5,8 @@ import pymysql.cursors
 # ON = No lag | OFF = Server freeze
 use_threaded_mysql = 1
 
-connection = pymysql.connect(host="localhost",
-                                  user="root",
+connection = pymysql.connect(host="46.4.82.149",
+                                  user="trikz",
                                   password="123pass",
                                   db="trikz_server",
                                   charset="utf8",
@@ -32,8 +32,8 @@ def load():
         TSQL.connect_use(connection)
         # Starts the queuehandler
         TSQL.handlequeue_start()
-
-        TSQL.fetchone('SELECT name FROM lol', callback=test)
+        for x in range(1000):
+          TSQL.fetchone('SELECT name FROM stats', callback=test)
 
 
 def test(data):
