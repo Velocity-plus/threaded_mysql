@@ -296,7 +296,7 @@ def test(data, das):
 SQL = ThreadedMySQL()
 
 
-SQL.connect('46.4.82.149', 'trikz', '123pass', 'trikz_server', 'utf8')
+SQL.connect('****', '****', '****', '***', 'utf8')
 
 SQL.handlequeue_start()
 SQL.fetchall("SELECT name FROM statsd", callback=test)
