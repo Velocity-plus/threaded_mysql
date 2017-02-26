@@ -5,13 +5,13 @@ last update *15-02-2017*
 
 ------------------------
 >####Table of contents
-> - **<a href="#">Introduction</a>**
-> - **<a href="#">Documentation</a>**
-> - <a href="#">Getting started</a>
-> - <a href="#">Connection</a>
-> - <a href="#">Queries</a>
-> - **<a href="#">Examples</a>**
-> - **<a href="#">Chat commands</a>**
+> - **<a href="#introduction">Introduction</a>**
+> - **<a href="#documentation">Documentation</a>**
+> - <a href="#getting-started">Getting started</a>
+> - <a href="#connection">Connection</a>
+> - <a href="#class-functions">Class functions</a>
+> - **<a href="#examples">Examples</a>**
+> - <a href="#chat-commands">Chat commands</a>
 
 Introduction
 -----------------------------
@@ -70,7 +70,7 @@ Now that our connection has been made, we need to start the thread that handles 
 
 
 
-####**Querying**
+####**Class functions**
 Finally, now we can make use of it. The functions available are listed below
 ```python
     # Different types of queries availabe
