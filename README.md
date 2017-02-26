@@ -1,14 +1,20 @@
-**Threaded MySQL 2.0.0**
--------------
+Threaded MySQL
+===================== 
+Version 2.0.3
+last update *15-02-2017*
 
-**UPDATE 15-02-2017**
+------------------------
+>####Table of contents
+> - **<a href="#">Introduction</a>**
+> - **<a href="#">Documentation</a>**
+> - <a href="#">Getting started</a>
+> - <a href="#">Connection</a>
+> - <a href="#">Queries</a>
+> - **<a href="#">Examples</a>**
+> - **<a href="#">Chat commands</a>**
 
-Now uses GameThread instead of Repeat and Delay                                                                                         Delaying the queue is still possible tho, through
-
-```python
-TSQL.wait(5) # Seconds
-```
-
+Introduction
+-----------------------------
 
 If your server requires a remote connection to a database, stacked up queries can cause noticeable lag in your game server (freezing, players twitching) since MySQL doesn't 'really' queue up the queries. 
 
@@ -16,14 +22,21 @@ I've made a library to fix this problem, it basically queues up the queries and 
 Remember that all queries now requires a callback, since they are truely dispatched.
  
  This library will only work for Source-python, but I am working on a version for regular use.
- 
- **Installation**
- 
- Download the latest release and drag the folder into your /addons/source-python/packages/source-python/..                          Restart your server.
-  
 
-**Documentation**
--------------
+Documentation
+---------------------
+The following section will go into the details of how to implement the threaded MySQL module.
+
+####**Getting started**
+
+- Download the latest <a href="https://github.com/Velocity-plus/threaded_mysql/releases">release</a> 
+- Drag the contents of the folder into your /addons/source-python/packages/source-python/..
+- Restart your server.
+
+
+ 
+ 
+####**Connection**
 
 The library works as an extension of PyMYSQL, so as any other MySQL script, a connection must be established to a database, but before we can do that, let us initialize the class for threaded MySQL. 
 ```python
@@ -50,12 +63,14 @@ If you don't want to connect with Threaded MySQL you can make your connection el
 
    TSQL.connect_use(connection)
 ```
-
-
 Now that our connection has been made, we need to start the thread that handles the queue of queries, as seen below.
 ```python
     TSQL.handlequeue_start()
 ```
+
+
+
+####**Querying**
 Finally, now we can make use of it. The functions available are listed below
 ```python
     # Different types of queries availabe
@@ -88,11 +103,12 @@ It's important to note that when using the **fetchone** or **fetchall** it will 
 
 If you want to arguments to the sql query, you can pass them through args=(userid,) - expects a tuple
 
-If you want to grab the data from **fetchone** or **fetchall** a callback is necessary. To demonstrate this look at the code examples below:
 
-**Code examples**
--------------
-More examples coming soon!!
+
+Examples
+--------
+
+If you want to grab the data from **fetchone** or **fetchall** a callback is necessary. To demonstrate this look at the code examples below:
 
 ```python
 from messages import SayText2
@@ -154,19 +170,23 @@ def on_player_say(game_event):
         # Fetches one name
         TSQL.execute("INSERT INTO my_database (name) VALUES('John')", callback=sql_callback_3, get_info=True)
 ```
+
+
+####Chat commands
+
 Output !fetchall
-=> You wrote: !fetchall
-=> Name: <name >
-=> Name: <name > 
-=> (...)
+> You wrote: !fetchall
+> Name: <name >
+> Name: <name > 
+> (...)
 
 Output !fetchone
-=> Name: John
+> Name: John
 
 Output !info
-=> Query: INSERT INTO stats (name) VALUES('John')
-=> Time: 0.014952421188354492 seconds
-=> Prioritized: False
+> Query: INSERT INTO stats (name) VALUES('John')
+> Time: 0.014952421188354492 seconds
+> Prioritized: False
 
 
 
