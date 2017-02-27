@@ -21,7 +21,7 @@ If your server requires a remote connection to a database, stacked up queries ca
 I've made a library to fix this problem, it basically queues up the queries and executes them with a dispatched GameThread. It's inspired from the Sourcemod threaded mysql https://wiki.alliedmods.net/SQL_(SourceMod_Scripting)
 Remember that all queries now requires a callback, since they are truely dispatched.
  
- This library will only work for Source-python, but I am working on a version for regular use.
+ This library will automaticly work for Source-python, but if you want to test it in your idle, make sure to grab the corresponding file under /testing/none-python/
 
 Documentation
 ---------------------
