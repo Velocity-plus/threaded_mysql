@@ -3,8 +3,11 @@ Threaded MySQL
 Version 2.0.3
 last update *15-02-2017*
 
+
 ------------------------
->####Table of contents
+
+
+>#### Table of contents
 > - **<a href="#introduction">Introduction</a>**
 > - **<a href="#documentation">Documentation</a>**
 > - <a href="#getting-started">Getting started</a>
@@ -27,7 +30,7 @@ Documentation
 ---------------------
 The following section will go into the details of how to implement the threaded MySQL module.
 
-####**Getting started**
+#### **Getting started**
 
 - Download the latest <a href="https://github.com/Velocity-plus/threaded_mysql/releases">release</a> 
 - Drag the contents of the folder into your /addons/source-python/packages/source-python/..
@@ -36,7 +39,7 @@ The following section will go into the details of how to implement the threaded 
 
  
  
-####**Connection**
+#### **Connection**
 
 The library works as an extension of PyMYSQL, so as any other MySQL script, a connection must be established to a database, but before we can do that, let us initialize the class for threaded MySQL. 
 ```python
@@ -70,7 +73,9 @@ Now that our connection has been made, we need to start the thread that handles 
 
 
 
-####**Class functions**
+#### **Class functions**
+
+
 Finally, now we can make use of it. The functions available are listed below
 ```python
     # Different types of queries availabe
@@ -172,7 +177,7 @@ def on_player_say(game_event):
 ```
 
 
-####Chat commands
+#### Chat commands
 
 Output !fetchall
 > You wrote: !fetchall
