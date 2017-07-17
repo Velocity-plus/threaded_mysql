@@ -87,9 +87,9 @@ Finally, now we can make use of it. The functions available are listed below
     #     before the rest of the queue is finished
     #    :param get_info: If you want information passed to the callback
     #     (such as timestamp, query and prioritized)
-    TSQL.execute(query, args=None, callback=None, data_pack=None, seconds=0.1)
-    TSQL.fetchone(query, args=None, callback=None, data_pack=None, seconds=0.1)
-    TSQL.fetchall(query, args=None, callback=None, data_pack=None, seconds=0.1)
+    TSQL.execute(query, args=None, callback=None, data_pack=None, prioritize=False, seconds=0.1, get_info=False)
+    TSQL.fetchone(query, args=None, callback=None, data_pack=None, prioritize=False, seconds=0.1, get_info=False)
+    TSQL.fetchall(query, args=None, callback=None, data_pack=None, prioritize=False, seconds=0.1, get_info=False)
     
     # Returns the size of the queue
     TSQL.queue_size()
@@ -173,7 +173,7 @@ def on_player_say(game_event):
 
     if text == '!info':
         # Fetches one name
-        TSQL.execute("INSERT INTO my_database (name) VALUES('John')", callback=sql_callback_3, get_info=True)
+        TSQL.execute("INSERT INTO my_database (name) VALUES('John')", callback=sql_callback_3, get_info=True, prioritized=True)
 ```
 
 
