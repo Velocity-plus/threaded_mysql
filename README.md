@@ -1,7 +1,7 @@
 Threaded MySQL
 ===================== 
-Version 2.0.3
-last update *15-02-2017*
+Version 2.0.4
+last update *04-10-2018*
 
 
 ------------------------
