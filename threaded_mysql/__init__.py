@@ -25,7 +25,7 @@ class ThreadedMySQL:
         self.connection_method = 0
 
         # Issue with print for WINDOWS user set the variable to 'echo_console'
-        self.error_handling = 'print'
+        self.error_handling = 'echo_console'
         # Show print messages?
         self._debug = True
 
@@ -111,7 +111,16 @@ class ThreadedMySQL:
         else:
             self._p_queue.put([query, args, callback, data_pack, get_info, query_type])
 
+    def commit(self):
+        self._r_queue.put('commit')
+
     def complete_task(self, worker, prio=None):
+        if worker == 'commit':
+            from messages import SayText2
+            SayText2('Database commited').send()
+            self.connection.commit()
+            return
+
         query = worker[0]
         args = worker[1]
         callback = worker[2]
@@ -291,12 +300,6 @@ class ThreadedMySQL:
                     echo_console('threaded_mysql: [ERROR] Not possible to create cursor.')
 
 
-    def commit(self):
-        """
-        Regular pymysql commit
-        :return:
-        """
-        self.connection.commit()
 
     def close(self, finish_queue_before_close=False):
         """
